@@ -42,7 +42,6 @@ async function request(method, url, body) {
     return null;
   }
 
-  const isJson = response.headers.get('Content-Type')?.includes('application/json');
   const data = await response.json();
   if (!response.ok) {
     throw new ApiError(data.error, response.status);

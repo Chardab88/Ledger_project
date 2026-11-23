@@ -6,8 +6,7 @@ import { Router } from 'express';
  * @param {import('../services/SummaryService.js').SummaryService} summaryService
  * @returns {Router}
  */
-// TODO: Remove this line once summaryService is used below.
-export function summaryRoutes(summaryService) {
+export function summaryRoutes(_summaryService) {
   const router = Router();
 
   // TODO: Respond with the totals from summaryService.getSummary() (200):

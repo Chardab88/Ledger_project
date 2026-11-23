@@ -4,6 +4,12 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig([
   { ignores: ["coverage/"] },
-  { files: ["**/*.{js,mjs,cjs}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.node } },
+  {
+    files: ["**/*.{js,mjs,cjs}"],
+    plugins: { js },
+    extends: ["js/recommended"],
+    languageOptions: { globals: globals.node },
+    rules: { "no-unused-vars": ["error", { argsIgnorePattern: "^_" }] },
+  },
   { files: ["public/**/*.js"], languageOptions: { globals: globals.browser } },
 ]);
