@@ -12,8 +12,8 @@ export function summaryRoutes(_summaryService) {
   // TODO: Respond with the totals from summaryService.getSummary() (200):
   //       { salary, basic, extra, total, savings }
   router.get('/', (req, res) => {
-    res.status(501).json({ error: 'GET /api/summary is not implemented yet' });
-  });
+  res.status(200).json(_summaryService.getSummary());
+});
 
   return router;
 }

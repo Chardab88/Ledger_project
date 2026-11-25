@@ -1,5 +1,5 @@
 import { MoneyEntry } from './MoneyEntry.js';
-import { CATEGORIES } from './Category.js';
+
 
 
 
@@ -19,7 +19,6 @@ export class Salary extends MoneyEntry {
   }
 
   /**
-   * Validates the inherited fields, description and category.
    *
    * @returns {string[]} Validation error messages; empty if valid.
    */

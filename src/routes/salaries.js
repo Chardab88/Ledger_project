@@ -53,9 +53,7 @@ export function salaryRoutes(ledger) {
  */
 function toSalary(body = {}) {
   return new Salary({
-    description: body.description,
     amount: Number(body.amount),
-    category: body.category,
     date: body.date,
   });
 }

@@ -17,11 +17,16 @@ export class SummaryService {
    * @returns {{ salary: number, basic: number, extra: number, total: number, savings: number }}
    */
   getSummary() {
-    // TODO: Add up the amounts of all salaries.
-    // TODO: Add up the expense amounts by category (basic and extra),
-    //       and the overall total of all expenses.
-    // TODO: Calculate savings as total salary minus total expenses.
-    // TODO: Round every total to 2 decimal places.
-    return { salary: 0, basic: 0, extra: 0, total: 0, savings: 0 };
+    const sum = (entries) =>
+  entries.reduce((total, entry) => total + entry.amount, 0);
+    const expenses = this.expenses.findAll();
+const salaries = this.salaries.findAll();
+
+const salary = sum(salaries);
+const basic = sum(expenses.filter((expense) => expense.category === 'basic'));
+const extra = sum(expenses.filter((expense) => expense.category === 'extra'));
+const total = sum(expenses);
+const savings = salary - total;
+    return { salary: salary, basic: basic, extra: extra, total: total, savings: savings };
   }
 }
