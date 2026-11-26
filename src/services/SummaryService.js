@@ -17,16 +17,24 @@ export class SummaryService {
    * @returns {{ salary: number, basic: number, extra: number, total: number, savings: number }}
    */
   getSummary() {
-    const sum = (entries) =>
-  entries.reduce((total, entry) => total + entry.amount, 0);
+    const sum = (entries) => entries.reduce((total, entry) => total + entry.amount, 0);
+    const roundToCents = (amount) =>
+      Math.sign(amount) * Math.round((Math.abs(amount) + Number.EPSILON) * 100) / 100;
     const expenses = this.expenses.findAll();
-const salaries = this.salaries.findAll();
+    const salaries = this.salaries.findAll();
 
-const salary = sum(salaries);
-const basic = sum(expenses.filter((expense) => expense.category === 'basic'));
-const extra = sum(expenses.filter((expense) => expense.category === 'extra'));
-const total = sum(expenses);
-const savings = salary - total;
-    return { salary: salary, basic: basic, extra: extra, total: total, savings: savings };
+    const salary = sum(salaries);
+    const basic = sum(expenses.filter((expense) => expense.category === 'basic'));
+    const extra = sum(expenses.filter((expense) => expense.category === 'extra'));
+    const total = sum(expenses);
+    const savings = salary - total;
+
+    return {
+      salary: roundToCents(salary),
+      basic: roundToCents(basic),
+      extra: roundToCents(extra),
+      total: roundToCents(total),
+      savings: roundToCents(savings),
+    };
   }
 }

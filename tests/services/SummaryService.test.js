@@ -1,42 +1,96 @@
-import { describe, it } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import { SummaryService } from '../../src/services/SummaryService.js';
+import { Expense } from '../../src/models/Expense.js';
+import { Salary } from '../../src/models/Salary.js';
 
-// TODO: Import expect from 'vitest'.
-// TODO: Import SummaryService from '../../src/services/SummaryService.js'.
-// TODO: Import Expense from '../../src/models/Expense.js'.
-// TODO: Import Salary from '../../src/models/Salary.js'.
+function makeLedger(entries) {
+  return { findAll: () => entries };
+}
+
+function makeExpense(amount, category) {
+  return new Expense({
+    description: 'Test expense',
+    amount,
+    category,
+    date: '2026-11-01',
+  });
+}
+
+function makeSalary(amount) {
+  return new Salary({ amount, date: '2026-11-01' });
+}
+
+function getSummary(expenses = [], salaries = []) {
+  return new SummaryService(makeLedger(expenses), makeLedger(salaries)).getSummary();
+}
 
 describe('SummaryService', () => {
-  // TODO: Make a fake ledger for your tests. It only needs a findAll()
-  //       method that returns a list of entries. For example:
-  //
-  //   const expenses = {
-  //     findAll() {
-  //       return [
-  //         new Expense({ description: 'Rent', amount: 1200, category: 'basic', date: '2026-11-01' }),
-  //         new Expense({ description: 'Movie', amount: 15, category: 'extra', date: '2026-11-05' }),
-  //       ];
-  //     },
-  //   };
-  //
-  //   const salaries = {
-  //     findAll() {
-  //       return [new Salary({ amount: 3000, date: '2026-11-01' })];
-  //     },
-  //   };
-  //
-  //   const summary = new SummaryService(expenses, salaries).getSummary();
-  //
-  //   Here summary.basic is 1200, summary.extra is 15, summary.total is 1215,
-  //   and summary.savings is 1785.
-
-  // TODO: Replace each it.todo with an it test. Add any other cases you think of.
   describe('getSummary()', () => {
-    it.todo('returns all zeros when there are no expenses or salaries');
-    it.todo('adds up all salaries');
-    it.todo('adds up basic and extra expenses separately');
-    it.todo('calculates the total of all expenses');
-    it.todo('calculates savings as total salary minus total expenses');
-    it.todo('returns negative savings when expenses are higher than salary');
-    it.todo('rounds totals to 2 decimal places');
+    it('returns all zeros when there are no expenses or salaries', () => {
+      expect(getSummary()).toEqual({
+        salary: 0,
+        basic: 0,
+        extra: 0,
+        total: 0,
+        savings: 0,
+      });
+    });
+
+    it('adds up all salaries', () => {
+      expect(getSummary([], [makeSalary(3000), makeSalary(500)]).salary).toBe(3500);
+    });
+
+    it('adds up basic and extra expenses separately', () => {
+      const summary = getSummary([
+        makeExpense(1200, 'basic'),
+        makeExpense(15, 'extra'),
+        makeExpense(50, 'basic'),
+      ]);
+
+      expect(summary.basic).toBe(1250);
+      expect(summary.extra).toBe(15);
+    });
+
+    it('calculates the total of all expenses', () => {
+      const summary = getSummary([
+        makeExpense(1200, 'basic'),
+        makeExpense(15, 'extra'),
+      ]);
+
+      expect(summary.total).toBe(1215);
+    });
+
+    it('calculates savings as total salary minus total expenses', () => {
+      const summary = getSummary(
+        [makeExpense(1200, 'basic'), makeExpense(15, 'extra')],
+        [makeSalary(3000)],
+      );
+
+      expect(summary.savings).toBe(1785);
+    });
+
+    it('returns negative savings when expenses are higher than salary', () => {
+      const summary = getSummary(
+        [makeExpense(1200, 'basic')],
+        [makeSalary(1000)],
+      );
+
+      expect(summary.savings).toBe(-200);
+    });
+
+    it('rounds totals to 2 decimal places', () => {
+      const summary = getSummary(
+        [makeExpense(0.1, 'basic'), makeExpense(0.2, 'extra')],
+        [makeSalary(0.1), makeSalary(0.2)],
+      );
+
+      expect(summary).toEqual({
+        salary: 0.3,
+        basic: 0.1,
+        extra: 0.2,
+        total: 0.3,
+        savings: 0,
+      });
+    });
   });
 });
